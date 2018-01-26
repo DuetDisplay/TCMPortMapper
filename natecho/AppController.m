@@ -2,6 +2,9 @@
 #import "AppController.h"
 #import <TCMPortMapper/TCMPortMapper.h>
 
+@interface AppController () <NSStreamDelegate>
+@end
+
 @implementation AppController
 
 - (void)portMapperDidStartWork:(NSNotification *)aNotification {
@@ -123,10 +126,12 @@
             if (length) {
                 buffer[length]=0;
                 NSLog(@"%s %s",__FUNCTION__,buffer);
-                NSOutputStream *outputStream = [I_streamsArray objectAtIndex:[I_streamsArray indexOfObjectIdenticalTo:inputStream]+1];
+                NSOutputStream *outputStream = I_streamsArray[[I_streamsArray indexOfObjectIdenticalTo:inputStream] + 1];
                 [outputStream write:buffer maxLength:length];
             }
         }
+        break;
+    default:
         break;
     }
 }

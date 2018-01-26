@@ -41,13 +41,13 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright © 2005 Apple Computer, Inc., All Rights Reserved
+ Copyright ï¿½ 2005 Apple Computer, Inc., All Rights Reserved
  */ 
 
 #import <Foundation/Foundation.h>
 #import <CoreServices/CoreServices.h>
 
-NSString * const TCPServerErrorDomain;
+extern NSString * const TCPServerErrorDomain;
 
 typedef enum {
     kTCPServerCouldNotBindToIPv4Address = 1,

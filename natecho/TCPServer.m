@@ -41,13 +41,12 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright © 2005 Apple Computer, Inc., All Rights Reserved
+ Copyright ï¿½ 2005 Apple Computer, Inc., All Rights Reserved
  */ 
 
 #import "TCPServer.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <unistd.h>
 
 NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 
@@ -59,10 +58,6 @@ NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 
 - (void)dealloc {
     [self stop];
-    [domain release];
-    [name release];
-    [type release];
-    [super dealloc];
 }
 
 - (id)delegate {
@@ -79,7 +74,6 @@ NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 
 - (void)setDomain:(NSString *)value {
     if (domain != value) {
-        [domain release];
         domain = [value copy];
     }
 }
@@ -90,7 +84,6 @@ NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 
 - (void)setName:(NSString *)value {
     if (name != value) {
-        [name release];
         name = [value copy];
     }
 }
@@ -101,7 +94,6 @@ NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 
 - (void)setType:(NSString *)value {
     if (type != value) {
-        [type release];
         type = [value copy];
     }
 }
@@ -125,7 +117,7 @@ NSString * const TCPServerErrorDomain = @"TCPServerErrorDomain";
 // We gather some data here, and convert the function call to a method
 // invocation on TCPServer.
 static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType type, CFDataRef address, const void *data, void *info) {
-    TCPServer *server = (TCPServer *)info;
+    TCPServer *server = (__bridge TCPServer *)info;
     if (kCFSocketAcceptCallBack == type) { 
         // for an AcceptCallBack, the data parameter is a pointer to a CFSocketNativeHandle
         CFSocketNativeHandle nativeSocketHandle = *(CFSocketNativeHandle *)data;
@@ -141,7 +133,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
         if (readStream && writeStream) {
             CFReadStreamSetProperty(readStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
             CFWriteStreamSetProperty(writeStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue);
-            [server handleNewConnectionFromAddress:peer inputStream:(NSInputStream *)readStream outputStream:(NSOutputStream *)writeStream];
+            [server handleNewConnectionFromAddress:peer inputStream:(__bridge NSInputStream *)readStream outputStream:(__bridge NSOutputStream *)writeStream];
         } else {
             // on any failure, need to destroy the CFSocketNativeHandle 
             // since we are not going to use it any more
@@ -153,7 +145,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
 }
 
 - (BOOL)start:(NSError **)error {
-    CFSocketContext socketCtxt = {0, self, NULL, NULL, NULL};
+    CFSocketContext socketCtxt = {0, (__bridge void *)self, NULL, NULL, NULL};
     ipv4socket = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&TCPServerAcceptCallBack, &socketCtxt);
     ipv6socket = CFSocketCreate(kCFAllocatorDefault, PF_INET6, SOCK_STREAM, IPPROTO_TCP, kCFSocketAcceptCallBack, (CFSocketCallBack)&TCPServerAcceptCallBack, &socketCtxt);
 
@@ -179,7 +171,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
     addr4.sin_addr.s_addr = htonl(INADDR_ANY);
     NSData *address4 = [NSData dataWithBytes:&addr4 length:sizeof(addr4)];
 
-    if (kCFSocketSuccess != CFSocketSetAddress(ipv4socket, (CFDataRef)address4)) {
+    if (kCFSocketSuccess != CFSocketSetAddress(ipv4socket, (__bridge CFDataRef)address4)) {
         if (error) *error = [[NSError alloc] initWithDomain:TCPServerErrorDomain code:kTCPServerCouldNotBindToIPv4Address userInfo:nil];
         if (ipv4socket) CFRelease(ipv4socket);
         if (ipv6socket) CFRelease(ipv6socket);
@@ -191,7 +183,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
     if (0 == port) {
         // now that the binding was successful, we get the port number 
         // -- we will need it for the v6 endpoint and for the NSNetService
-        NSData *addr = [(NSData *)CFSocketCopyAddress(ipv4socket) autorelease];
+        NSData *addr = (__bridge_transfer NSData *)CFSocketCopyAddress(ipv4socket);
         memcpy(&addr4, [addr bytes], [addr length]);
         port = ntohs(addr4.sin_port);
     }
@@ -205,7 +197,7 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
     memcpy(&(addr6.sin6_addr), &in6addr_any, sizeof(addr6.sin6_addr));
     NSData *address6 = [NSData dataWithBytes:&addr6 length:sizeof(addr6)];
 
-    if (kCFSocketSuccess != CFSocketSetAddress(ipv6socket, (CFDataRef)address6)) {
+    if (kCFSocketSuccess != CFSocketSetAddress(ipv6socket, (__bridge CFDataRef)address6)) {
         if (error) *error = [[NSError alloc] initWithDomain:TCPServerErrorDomain code:kTCPServerCouldNotBindToIPv6Address userInfo:nil];
         if (ipv4socket) CFRelease(ipv4socket);
         if (ipv6socket) CFRelease(ipv6socket);
@@ -245,7 +237,6 @@ static void TCPServerAcceptCallBack(CFSocketRef socket, CFSocketCallBackType typ
 
 - (BOOL)stop {
     [netService stop];
-    [netService release];
     netService = nil;
     if (ipv4socket) {
         CFSocketInvalidate(ipv4socket);

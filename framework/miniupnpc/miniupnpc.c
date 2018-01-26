@@ -112,7 +112,7 @@ getContentLengthAndHeaderLength(char * p, int n,
 	while(line < p + n)
 	{
 		linelen = 0;
-		while(line[linelen] != '\r' && line[linelen] != '\r')
+		while(line[linelen] != '\r')
 		{
 			if(line+linelen >= p+n)
 				return;
@@ -124,7 +124,7 @@ getContentLengthAndHeaderLength(char * p, int n,
 		line = line + linelen + 2;
 		if(line[0] == '\r' && line[1] == '\n')
 		{
-			*headerlen = (line - p) + 2;
+			*headerlen = (int) ((line - p) + 2);
 			return;
 		}
 	}
@@ -441,8 +441,8 @@ struct UPNPDev * upnpDiscover(int delay, const char * multicastif,
 		n = snprintf(bufr, sizeof(bufr),
 		             MSearchMsgFmt, deviceList[deviceIndex++]);
 		/*printf("Sending %s", bufr);*/
-		n = sendto(sudp, bufr, n, 0,
-		           (struct sockaddr *)&sockudp_w, sizeof(struct sockaddr_in));
+		n = (int) sendto(sudp, bufr, n, 0,
+						   (struct sockaddr *)&sockudp_w, sizeof(struct sockaddr_in));
 		if (n < 0) {
 			PRINT_SOCKET_ERROR("sendto");
 			closesocket(sudp);
@@ -515,7 +515,7 @@ url_cpy_or_cat(char * dst, const char * src, int n)
 	}
 	else
 	{
-		int l = strlen(dst);
+		int l = (int) strlen(dst);
 		if(src[0] != '/')
 			dst[l++] = '/';
 		if(l<=n)
@@ -530,9 +530,9 @@ void GetUPNPUrls(struct UPNPUrls * urls, struct IGDdatas * data,
 {
 	char * p;
 	int n1, n2, n3;
-	n1 = strlen(data->urlbase);
+	n1 = (int) strlen(data->urlbase);
 	if(n1==0)
-		n1 = strlen(descURL);
+		n1 = (int) strlen(descURL);
 	n1 += 2;	/* 1 byte more for Null terminator, 1 byte for '/' if needed */
 	n2 = n1; n3 = n1;
 	n1 += strlen(data->scpdurl);
@@ -618,7 +618,7 @@ int ReceiveData(int socket, char * data, int length, int timeout)
         return 0;
     }    
 #endif
-	n = recv(socket, data, length, 0);
+	n = (int) recv(socket, data, (size_t) length, 0);
 	if(n<0)
 	{
 		PRINT_SOCKET_ERROR("recv");

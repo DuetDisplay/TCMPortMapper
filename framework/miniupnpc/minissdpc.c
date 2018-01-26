@@ -53,7 +53,7 @@ getDevicesFromMiniSSDPD(const char * devtype, const char * socketpath)
 		close(s);
 		return NULL;
 	}
-	stsize = strlen(devtype);
+	stsize = (unsigned int) strlen(devtype);
 	buffer[0] = 1; /* request type 1 : request devices/services by type */
 	p = buffer + 1;
 	l = stsize;	CODELENGTH(l, p);
