@@ -47,11 +47,11 @@
 
     [center addObserver:self selector:@selector(portMapperDidReceiveUPNPMappingTable:) name:TCMPortMapperDidReceiveUPNPMappingTableNotification object:pm];
 
-    NSArray *array = [[[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Presets" ofType:@"plist"]] autorelease];
+    NSArray *array = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Presets" ofType:@"plist"]];
     NSEnumerator *presets = [array objectEnumerator];
     NSDictionary *preset = nil;
     while ((preset = [presets nextObject])) {
-        NSString *title = [preset objectForKey:@"mappingTitle"];
+        NSString *title = preset[@"mappingTitle"];
         if (title) {
             [O_addPresetPopupButton addItemWithTitle:title];
             [[[O_addPresetPopupButton itemArray] lastObject] setRepresentedObject:preset];
@@ -60,7 +60,7 @@
     
     // set the version
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString *versionString = [NSString stringWithFormat:@"%@ %@ (%@)",[O_aboutVersionLineTextField stringValue],[infoDictionary objectForKey:@"CFBundleShortVersionString"],[infoDictionary objectForKey:@"CFBundleVersion"]];
+    NSString *versionString = [NSString stringWithFormat:@"%@ %@ (%@)", [O_aboutVersionLineTextField stringValue], infoDictionary[@"CFBundleShortVersionString"], infoDictionary[@"CFBundleVersion"]];
     [O_aboutVersionLineTextField setStringValue:versionString];
 }
 
@@ -168,7 +168,7 @@
 }
 
 - (void)controlTextDidChange:(NSNotification *)aNotification {
-    NSTextView *fieldEditor = [[aNotification userInfo] objectForKey:@"NSFieldEditor"];
+    NSTextView *fieldEditor = [aNotification userInfo][@"NSFieldEditor"];
     if (fieldEditor == [O_addLocalPortField currentEditor]) {
         [O_addDesiredField setStringValue:[O_addLocalPortField stringValue]];
     }
@@ -205,13 +205,13 @@
 #pragma mark IBActions
 
 - (IBAction)addMappingEndSheet:(id)aSender {
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"active",[O_addDescriptionField stringValue],@"mappingTitle",[O_addReferenceStringField stringValue],@"referenceString",nil];
+    NSMutableDictionary *userInfo = [@{@"active": @YES, @"mappingTitle": [O_addDescriptionField stringValue], @"referenceString": [O_addReferenceStringField stringValue]} mutableCopy];
     TCMPortMapping *mapping = [TCMPortMapping portMappingWithLocalPort:[O_addLocalPortField intValue] desiredExternalPort:[O_addDesiredField intValue] transportProtocol:TCMPortMappingTransportProtocolTCP userInfo:userInfo];
     int transportProtocol = 0;
     if ([O_addProtocolTCPButton state] == NSOnState) transportProtocol+=TCMPortMappingTransportProtocolTCP;
     if ([O_addProtocolUDPButton state] == NSOnState) transportProtocol+=TCMPortMappingTransportProtocolUDP;
-    [mapping setTransportProtocol:transportProtocol];
-    [mapping addObserver:self forKeyPath:@"userInfo.active" options:0 context:nil];
+    [mapping setTransportProtocol:(TCMPortMappingTransportProtocol) transportProtocol];
+	[mapping addObserver:self forKeyPath:@"userInfo.active" options:0 context:nil];
     [O_mappingsArrayController addObject:mapping];
     [[TCMPortMapper sharedInstance] addPortMapping:mapping];
     [NSApp endSheet:O_addSheetPanel];
@@ -235,21 +235,21 @@
 	}
 	
 	if ([O_dontShowInstructionsAgainButton state] == NSOnState) {
-	    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:@"DontShowInstructionsAgain"];	
-	}
-	
+	    [[NSUserDefaults standardUserDefaults] setObject:@YES forKey:@"DontShowInstructionsAgain"];
+    }
+
     [NSApp endSheet:O_instructionalSheetPanel];
 }
 
 - (IBAction)choosePreset:(id)aSender {
 //    NSLog(@"%s %@ %@ %@",__FUNCTION__,aSender, [aSender selectedItem],[[aSender selectedItem] representedObject]);
     NSDictionary *preset = [[aSender selectedItem] representedObject];
-    [O_addLocalPortField setObjectValue:[preset objectForKey:@"localPort"]];
-    [O_addDesiredField   setObjectValue:[preset objectForKey:@"desiredPort"]];
-    [O_addReferenceStringField setObjectValue:[preset objectForKey:@"referenceString"]];
-    [O_addDescriptionField setObjectValue:[preset objectForKey:@"mappingTitle"]];
-    [O_addProtocolTCPButton setState:([[preset objectForKey:@"transportProtocol"] intValue] & TCMPortMappingTransportProtocolTCP)?NSOnState:NSOffState];
-    [O_addProtocolUDPButton setState:([[preset objectForKey:@"transportProtocol"] intValue] & TCMPortMappingTransportProtocolUDP)?NSOnState:NSOffState];
+    [O_addLocalPortField setObjectValue:preset[@"localPort"]];
+    [O_addDesiredField setObjectValue:preset[@"desiredPort"]];
+    [O_addReferenceStringField setObjectValue:preset[@"referenceString"]];
+    [O_addDescriptionField setObjectValue:preset[@"mappingTitle"]];
+    [O_addProtocolTCPButton setState:([preset[@"transportProtocol"] intValue] & TCMPortMappingTransportProtocolTCP)?NSOnState:NSOffState];
+    [O_addProtocolUDPButton setState:([preset[@"transportProtocol"] intValue] & TCMPortMappingTransportProtocolUDP)?NSOnState:NSOffState];
 }
 
 
@@ -299,7 +299,7 @@
 }
 
 - (void)portMapperDidReceiveUPNPMappingTable:(NSNotification *)aNotification {
-    [O_UPNPMappingListArrayController setContent:[[aNotification userInfo] objectForKey:@"mappingTable"]];
+    [O_UPNPMappingListArrayController setContent:[aNotification userInfo][@"mappingTable"]];
     [[O_upnpMappingListTabItem tabView] selectTabViewItem:O_upnpMappingListTabItem];
 }
 

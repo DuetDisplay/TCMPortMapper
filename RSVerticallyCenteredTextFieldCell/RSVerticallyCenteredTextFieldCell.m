@@ -20,7 +20,7 @@
 	// the configuration of the field editor.  We sneak around this by 
 	// intercepting selectWithFrame and editWithFrame and sneaking a 
 	// reduced, centered rect in at the last minute.
-	if (mIsEditingOrSelecting == NO)
+	if (!mIsEditingOrSelecting)
 	{
 		// Get our ideal size for current text
 		NSSize textSize = [self cellSizeForBounds:theRect];

@@ -14,7 +14,7 @@
 static UNSIGNED_INTEGER
 my_atoui(const char * s)
 {
-	return s ? ((UNSIGNED_INTEGER)STRTOUI(s, NULL, 0)) : 0;
+	return s ? STRTOUI(s, NULL, 0) : 0;
 }
 
 /*
@@ -32,7 +32,7 @@ UPNP_GetTotalBytesSent(const char * controlURL,
 	ParseNameValue(buffer, bufsize, &pdata);
 	/*DisplayNameValueList(buffer, bufsize);*/
 	p = GetValueFromNameValueList(&pdata, "NewTotalBytesSent");
-	r = my_atoui(p);
+	r = (unsigned int) my_atoui(p);
 	ClearNameValueList(&pdata);
 	return r;
 }
@@ -52,7 +52,7 @@ UPNP_GetTotalBytesReceived(const char * controlURL,
 	ParseNameValue(buffer, bufsize, &pdata);
 	/*DisplayNameValueList(buffer, bufsize);*/
 	p = GetValueFromNameValueList(&pdata, "NewTotalBytesReceived");
-	r = my_atoui(p);
+	r = (unsigned int) my_atoui(p);
 	ClearNameValueList(&pdata);
 	return r;
 }
@@ -72,7 +72,7 @@ UPNP_GetTotalPacketsSent(const char * controlURL,
 	ParseNameValue(buffer, bufsize, &pdata);
 	/*DisplayNameValueList(buffer, bufsize);*/
 	p = GetValueFromNameValueList(&pdata, "NewTotalPacketsSent");
-	r = my_atoui(p);
+	r = (unsigned int) my_atoui(p);
 	ClearNameValueList(&pdata);
 	return r;
 }
@@ -92,7 +92,7 @@ UPNP_GetTotalPacketsReceived(const char * controlURL,
 	ParseNameValue(buffer, bufsize, &pdata);
 	/*DisplayNameValueList(buffer, bufsize);*/
 	p = GetValueFromNameValueList(&pdata, "NewTotalPacketsReceived");
-	r = my_atoui(p);
+	r = (unsigned int) my_atoui(p);
 	ClearNameValueList(&pdata);
 	return r;
 }

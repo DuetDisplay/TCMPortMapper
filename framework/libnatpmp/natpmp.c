@@ -90,7 +90,7 @@ int sendpendingrequest(natpmp_t * p)
 	addr.sin_port = htons(NATPMP_PORT);
 	addr.sin_addr.s_addr = p->gateway;
 	r = (int)sendto(p->s, p->pending_request, p->pending_request_len, 0,
-	                   (struct sockaddr *)&addr, sizeof(addr));*/
+					   (struct sockaddr *)&addr, sizeof(addr));*/
 	r = (int)send(p->s, p->pending_request, p->pending_request_len, 0);
 	return (r<0) ? NATPMP_ERR_SENDERR : r;
 }
@@ -144,7 +144,7 @@ int sendpublicaddressrequest(natpmp_t * p)
 }
 
 int sendnewportmappingrequest(natpmp_t * p, int protocol,
-                              uint16_t privateport, uint16_t publicport,
+							  uint16_t privateport, uint16_t publicport,
 							  uint32_t lifetime)
 {
 	if(!p || (protocol!=NATPMP_PROTOCOL_TCP && protocol!=NATPMP_PROTOCOL_UDP))
@@ -168,8 +168,8 @@ int readnatpmpresponse(natpmp_t * p, natpmpresp_t * response)
 	int n;
 	if(!p)
 		return NATPMP_ERR_INVALIDARGS;
-	n = recvfrom(p->s, buf, sizeof(buf), 0,
-	             (struct sockaddr *)&addr, &addrlen);
+	n = (int) recvfrom(p->s, buf, sizeof(buf), 0,
+					 (struct sockaddr *)&addr, &addrlen);
 	if(n<0)
 		switch(errno) {
 		/*case EAGAIN:*/
