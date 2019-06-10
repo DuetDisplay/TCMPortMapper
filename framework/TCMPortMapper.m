@@ -750,12 +750,15 @@ enum {
 - (NSString *)routerIPAddress {
     SCDynamicStoreRef dynRef = SCDynamicStoreCreate(kCFAllocatorSystemDefault, (CFStringRef)@"TCMPortMapper", NULL, NULL); 
     NSDictionary *scobjects = (__bridge_transfer NSDictionary *)SCDynamicStoreCopyValue(dynRef,(__bridge CFStringRef)@"State:/Network/Global/IPv4" );
-    
-    NSString *routerIPAddress = (NSString *) scobjects[(__bridge NSString*)kSCPropNetIPv4Router];
-    routerIPAddress = [routerIPAddress copy];
-    
-    CFRelease(dynRef);
-    return routerIPAddress;
+	
+	if (dynRef) {
+		NSString *routerIPAddress = (NSString *) scobjects[(__bridge NSString*)kSCPropNetIPv4Router];
+		routerIPAddress = [routerIPAddress copy];
+		
+    	CFRelease(dynRef);
+		return routerIPAddress;
+	}
+    return nil;
 }
 
 - (NSString *)routerHardwareAddress {
