@@ -169,9 +169,11 @@ NSString * const TCMUPNPPortMapperDidEndWorkingNotification   =@"TCMUPNPPortMapp
     #if MAC_OS_X_VERSION_MIN_REQUIRED == MAC_OS_X_VERSION_10_2
                     success = SCNetworkCheckReachabilityByName(name, &status);
     #else
-                    SCNetworkReachabilityRef target = SCNetworkReachabilityCreateWithName(NULL, name);
-                    success = SCNetworkReachabilityGetFlags(target, (SCNetworkReachabilityFlags *) &status);
-                    CFRelease(target);
+                    SCNetworkReachabilityRef target = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, name);
+					if (target) {
+                    	success = SCNetworkReachabilityGetFlags(target, (SCNetworkReachabilityFlags *) &status);
+                    	CFRelease(target);
+					}
     #endif
 
     #ifndef NDEBUG
