@@ -717,6 +717,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* PortMapper */;
@@ -965,7 +966,6 @@
 				GCC_PREFIX_HEADER = framework/TCMPortMapper_Prefix.pch;
 				HEADER_SEARCH_PATHS = framework;
 				INFOPLIST_FILE = "framework/TCMPortMapper-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
@@ -997,7 +997,6 @@
 				GCC_PREFIX_HEADER = framework/TCMPortMapper_Prefix.pch;
 				HEADER_SEARCH_PATHS = framework;
 				INFOPLIST_FILE = "framework/TCMPortMapper-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
