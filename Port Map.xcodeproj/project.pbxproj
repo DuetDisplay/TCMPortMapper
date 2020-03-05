@@ -979,6 +979,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = de.codingmonkeys.TCMPortMapper;
 				PRODUCT_NAME = TCMPortMapper;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = framework;
 			};
 			name = Debug;
@@ -1013,6 +1014,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = de.codingmonkeys.TCMPortMapper;
 				PRODUCT_NAME = TCMPortMapper;
+				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = framework;
 			};
 			name = Release;
