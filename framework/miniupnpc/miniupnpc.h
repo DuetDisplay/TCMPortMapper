@@ -26,7 +26,7 @@ struct UPNPDev {
 	struct UPNPDev * pNext;
 	char * descURL;
 	char * st;
-	char buffer[2];
+	char buffer[];
 };
 
 /* upnpDiscover()

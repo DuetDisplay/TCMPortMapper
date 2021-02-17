@@ -473,7 +473,7 @@ struct UPNPDev * upnpDiscover(int delay, const char * multicastif,
 		{
 			/*printf("M-SEARCH Reply:\nST: %.*s\nLocation: %.*s\n",
 			       stsize, st, urlsize, descURL); */
-			tmp = (struct UPNPDev *)malloc(sizeof(struct UPNPDev)+urlsize+stsize);
+			tmp = (struct UPNPDev *)malloc(sizeof(struct UPNPDev)+urlsize+stsize+2);
 			tmp->pNext = devlist;
 			tmp->descURL = tmp->buffer;
 			tmp->st = tmp->buffer + 1 + urlsize;
