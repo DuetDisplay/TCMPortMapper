@@ -221,13 +221,19 @@ NSString * const TCMUPNPPortMapperDidEndWorkingNotification   =@"TCMUPNPPortMapp
                         } else {
                             if(externalIPAddress[0]) {
                                 NSString *ipString = [NSString stringWithUTF8String:externalIPAddress];
-                                NSMutableDictionary *userInfo = [@{@"externalIPAddress": ipString} mutableCopy];
-                                NSString *routerName = [NSString stringWithUTF8String:_igddata.modeldescription];
-                                if (routerName) userInfo[@"routerName"] = routerName;
-                                [[NSNotificationCenter defaultCenter] postNotificationOnMainThread:[NSNotification notificationWithName:TCMUPNPPortMapperDidGetExternalIPAddressNotification object:self userInfo:userInfo]];
-                                foundIDGDevice = YES;
-                                didFail = NO;
-                                break;
+								if (ipString != nil) {
+									NSMutableDictionary *userInfo = [@{@"externalIPAddress": ipString} mutableCopy];
+									NSString *routerName = [NSString stringWithUTF8String:_igddata.modeldescription];
+									if (routerName) userInfo[@"routerName"] = routerName;
+									[[NSNotificationCenter defaultCenter] postNotificationOnMainThread:[NSNotification notificationWithName:TCMUPNPPortMapperDidGetExternalIPAddressNotification object:self userInfo:userInfo]];
+									foundIDGDevice = YES;
+									didFail = NO;
+									break;
+								}
+								else {
+									didFail = YES;
+									errorString = @"Unable to read externalIPAddress";
+								}
                             } else {
                                 didFail = YES;
                                 errorString = @"No external IP address!";
